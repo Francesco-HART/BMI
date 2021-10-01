@@ -1,6 +1,7 @@
 import 'package:bmi_calculator/GenderEnum.dart';
 import 'package:bmi_calculator/MyIcon.dart';
 import 'package:bmi_calculator/MyCard.dart';
+import 'package:bmi_calculator/ResultPage.dart';
 import 'package:flutter/material.dart';
 
 const Color initStyleColor = Color(0xFF111328);
@@ -86,20 +87,31 @@ class _InputPageState extends State<InputPage> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(child: RoundIconButton()),
-                    Expanded(child: RoundIconButton()),
+                    Expanded(
+                        child: OtherCardChild(
+                      description: "WEIGHT",
+                    )),
+                    Expanded(child: OtherCardChild(description: "AGE")),
                   ],
                 ),
               ),
             ]),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Theme(
         data: ThemeData(
           accentColor: Color(0xFFEB1555),
         ),
         child: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {},
+          child: Icon(Icons.info),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ResultPage(),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -161,25 +173,80 @@ class SliderCard extends StatelessWidget {
 }
 
 class RoundIconButton extends StatelessWidget {
+  RoundIconButton({@required this.icon, @required this.onPress});
+  final IconData icon;
+  final Function onPress;
   @override
   Widget build(BuildContext context) {
-    return RawMaterialButton(
-      elevation: 6.0,
-      constraints: BoxConstraints.tightFor(width: 56, height: 56),
-      shape: CircleBorder(),
-      fillColor: Color(0xFF4C4F5E),
+    return Container(
+      margin: EdgeInsets.all(10),
+      child: RawMaterialButton(
+        child: Icon(icon),
+        elevation: 6.0,
+        constraints: BoxConstraints.tightFor(width: 60, height: 60),
+        shape: CircleBorder(),
+        fillColor: Color(0xFF4C4F5E),
+        onPressed: onPress,
+      ),
     );
   }
 }
 
-class OtherCardChild extends StatelessWidget {
+class OtherCardChild extends StatefulWidget {
+  OtherCardChild({
+    @required this.description,
+  }) {
+    this.value = description == "AGE" ? 21 : 90;
+  }
+  final String description;
+  int value;
+
+  @override
+  _OtherCardChildState createState() =>
+      _OtherCardChildState(value: value, description: description);
+}
+
+class _OtherCardChildState extends State<OtherCardChild> {
+  _OtherCardChildState({@required this.description, @required value}) {
+    this.value = description == "AGE" ? 21 : 90;
+  }
+  final String description;
+  int value;
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Row(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RoundIconButton(),
-          RoundIconButton(),
+          Text(
+            description,
+            style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.white,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              RoundIconButton(
+                onPress: () {
+                  setState(() {
+                    value++;
+                  });
+                },
+                icon: Icons.add,
+              ),
+              Text('$value'),
+              RoundIconButton(
+                onPress: () {
+                  setState(() {
+                    value--;
+                  });
+                },
+                icon: Icons.remove,
+              ),
+            ],
+          )
         ],
       ),
       margin: EdgeInsets.all(10),
